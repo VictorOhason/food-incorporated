@@ -3,90 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food Incorporated Login</title>
+    <title>Food Incorporated - Staff Login</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Inside <head> -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-
-<!-- Replace your <div class="social-login"> section with this: -->
-<div class="social-login">
-    <!-- This is the official Google Button -->
-    <div id="g_id_onload"
-         data-client_id="631299732349-um3fcnj9ok75a27vb1ddam16od0vqiag.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse">
-    </div>
-    <div class="g_id_signin" data-type="standard"></div>
-    
-    <!-- Apple requires a paid Developer Account ($99/yr) to function "really" -->
-    <button type="button" class="social-btn" onclick="alert('Apple requires a paid developer account to set up real OAuth')">
-        Sign in with Apple
-    </button>
-</div>
 </head>
-
 <body>
 
-    <div class="login-container">
-        <h1>Welcome back!</h1>
-        <p class="subtitle">Enter your credentials to access your account</p>
+    <header class="login-header">
+        <h1>Food Incorporated</h1>
+    </header>
 
-        <form id="loginForm" novalidate>
-            <!-- Email -->
-            <div class="form-group">
-                <label for="username">Email address</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Enter your email"
-                    required
-                >
-            </div>
+    <main class="main-content">
+        <div class="login-container">
+            <p class="subtitle">Please login to access the menu</p>
 
-            <!-- Password -->
-            <div class="form-group">
-                <label for="password">Password</label>
-
-                <div class="password-wrapper">
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="••••••••"
-                        required
-                        aria-describedby="passwordHelp"
-                    >
-
-                    <button
-                        type="button"
-                        class="toggle-password"
-                        aria-label="Show password"
-                        aria-pressed="false"
-                    >
-                        👁️
-                    </button>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Email Address</label>
+                    <input type="text" id="username" placeholder="name@example.com" required>
                 </div>
 
-                <small id="passwordHelp" class="sr-only">
-                    Password must not be empty
-                </small>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" placeholder="••••••••" required>
+                        <button type="button" class="toggle-password" aria-label="Toggle password">👁️</button>
+                    </div>
+                </div>
+
+                <input type="submit" value="Sign In" class="login-btn">
+            </form>
+
+            <div class="divider">OR</div>
+
+            <div class="social-login">
+                <button class="social-btn">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" width="18" alt="">
+                    Sign in with Google
+                </button>
             </div>
-
-            <!-- Options -->
-            <div class="options">
-                <label class="remember">
-                    <input type="checkbox">
-                    Remember for 30 days
-                </label>
-
-                <a href="#" class="forgot">Forgot password</a>
-            </div>
-
-            <!-- Login -->
-            <input type="submit" value="Login" class="login-btn">
-        </form>
-
-        <div class="divider">or</div>
+        </div>
+    </main>
 
     <script src="script.js"></script>
 </body>

@@ -1,8 +1,9 @@
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS 
-
 app = Flask(__name__)
-CORS(app)  # Allows the website to talk to this server
+# Change CORS to allow your specific GitHub URL
+CORS(app, resources={r"/*": {"origins": ["https://victorohason.github.io/food-incorporated/", "http://localhost:5000"]}})
 
 # Our "Database" (List of orders)
 orders = []
@@ -44,6 +45,6 @@ def update_status(order_id):
     return jsonify({"error": "Order not found"}), 404
 
 if __name__ == "__main__":
-    # Standard port for local development
-    print("🚀 Kitchen Server starting on http://127.0.0.1:5000")
-    app.run(port=5000, debug=True)
+    # Change this line to use the PORT provided by the host
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)

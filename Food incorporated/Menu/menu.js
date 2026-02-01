@@ -1,14 +1,27 @@
 // ================================
-// GLOBAL STATE
+// GLOBAL STATE & SETUP
 // ================================
-// Assign a random table number when they open the site
 const ASSIGNED_TABLE = Math.floor(Math.random() * 20) + 1;
-document.getElementById('display-table').textContent = ASSIGNED_TABLE;
+
+// Replace this with your actual URL once you create the service on Render.com
+const LIVE_SERVER_URL = "https://your-app-name.onrender.com/orders";
+
+window.onload = () => {
+    // 1. Display assigned table
+    const tableEl = document.getElementById('display-table');
+    if (tableEl) tableEl.textContent = ASSIGNED_TABLE;
+
+    // 2. Auto-fill name from login
+    const savedName = localStorage.getItem("customerName");
+    if (savedName) {
+        document.getElementById("customer-name").value = savedName;
+    }
+};
 
 let currentOrder = null;
 
 // ================================
-// 1. ADD / REMOVE LOGIC (+ and - buttons)
+// 1. ADD / REMOVE LOGIC (+ and -)
 // ================================
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('qty-btn')) {
@@ -18,67 +31,47 @@ document.addEventListener('click', (e) => {
 
         if (e.target.classList.contains('increase')) {
             qty++;
-        } else if (e.target.classList.contains('decrease')) {
-            if (qty > 0) qty--; // Prevents negative numbers
+        } else if (e.target.classList.contains('decrease') && qty > 0) {
+            qty--;
         }
 
         qtySpan.textContent = qty;
 
-        // Visual feedback: Change color if quantity > 0
-        if (qty > 0) {
-            qtySpan.style.color = "var(--british-red)";
-            qtySpan.style.fontWeight = "bold";
-        } else {
-            qtySpan.style.color = "var(--text-dark)";
-            qtySpan.style.fontWeight = "normal";
-        }
+        // Visual feedback
+        qtySpan.style.color = qty > 0 ? "#c8102e" : "#1a1a1a";
+        qtySpan.style.fontWeight = qty > 0 ? "bold" : "normal";
     }
 });
 
 // ================================
-// 2. SUBMIT → SHOW SUMMARY
+// 2. SUBMIT → SHOW MODAL SUMMARY
 // ================================
 const form = document.getElementById("order-form");
 const modal = document.getElementById("checkout-modal");
 const summary = document.getElementById("order-summary");
 const totalPriceEl = document.getElementById("total-price");
-// Inside menu.js, when the page loads:
-window.onload = () => {
-    const savedName = localStorage.getItem("customerName");
-    if (savedName) {
-        document.getElementById("customer-name").value = savedName;
-    }
-};
+
 form.addEventListener("submit", function (e) {
     e.preventDefault();
     
     const items = [];
     let grandTotal = 0;
 
-    // Scan all menu items to see what was selected
     document.querySelectorAll(".menu-item").forEach(item => {
         const qty = parseInt(item.querySelector(".quantity").textContent);
-        
         if (qty > 0) {
             const name = item.querySelector("h3").textContent;
             const price = parseFloat(item.querySelector(".price").textContent.replace('£', ''));
-            const subtotal = price * qty;
-            
-            items.push({
-                name: name,
-                quantity: qty,
-                subtotal: subtotal
-            });
-            grandTotal += subtotal;
+            items.push({ name, quantity: qty, subtotal: price * qty });
+            grandTotal += (price * qty);
         }
     });
 
     if (items.length === 0) {
-        alert("Your basket is empty! Please add some fish and chips.");
+        alert("Please select at least one item.");
         return;
     }
 
-    // Save order data temporarily
     currentOrder = {
         orderNumber: Math.floor(1000 + Math.random() * 9000),
         tableNumber: ASSIGNED_TABLE,
@@ -86,7 +79,6 @@ form.addEventListener("submit", function (e) {
         total: grandTotal.toFixed(2)
     };
 
-    // Show the modal
     summary.innerHTML = items.map(i => `
         <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
             <span>${i.quantity}x ${i.name}</span>
@@ -99,13 +91,13 @@ form.addEventListener("submit", function (e) {
 });
 
 // ================================
-// 3. CONFIRM → SEND TO PYTHON
+// 3. CONFIRM → SEND TO LIVE SERVER
 // ================================
 document.getElementById("confirm-order").addEventListener("click", () => {
     const customerName = document.getElementById("customer-name").value.trim();
 
     if (!customerName) {
-        alert("Please enter your name so we know who the food is for!");
+        alert("Please enter your name!");
         return;
     }
 
@@ -114,26 +106,29 @@ document.getElementById("confirm-order").addEventListener("click", () => {
         customerName: customerName
     };
 
-    // Disable button to prevent double-ordering
+    // Disable button to prevent double clicks
     const btn = document.getElementById("confirm-order");
     btn.disabled = true;
-    btn.textContent = "Sending...";
+    btn.textContent = "Sending to Kitchen...";
 
-    fetch("http://localhost:5000/orders", {
+    // Use the LIVE_SERVER_URL variable defined at the top
+    fetch(LIVE_SERVER_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalPayload)
     })
     .then(res => {
         if (res.ok) {
-            alert(`Thanks ${customerName}! Your order is being prepared for Table ${ASSIGNED_TABLE}.`);
-            location.reload(); // Reset everything
+            alert(`Order Sent! Table ${ASSIGNED_TABLE} is ready for you, ${customerName}.`);
+            location.reload(); 
+        } else {
+            throw new Error("Server error");
         }
     })
     .catch(() => {
-        alert("Error connecting to the kitchen. Is the server running?");
+        alert("Could not reach the kitchen. Is the Render server awake?");
         btn.disabled = false;
-        btn.textContent = "Send to Kitchen";
+        btn.textContent = "Confirm Order";
     });
 });
 

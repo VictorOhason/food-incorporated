@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Checkout — Payment</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <link rel="stylesheet" href="menu.css">
+</head>
+<body>
+    <main style="max-width:720px;margin:40px auto;padding:20px;">
+        <h1>Payment</h1>
+        <section id="order-section">
+            <h2>Order Summary</h2>
+            <div id="order-summary-block">Loading order...</div>
+        </section>
+
+        <section aria-labelledby="payment-heading">
+            <h2 id="payment-heading">Card Details</h2>
+            <form id="checkout-form" autocomplete="off">
+                <label>
+                    Cardholder name
+                    <input id="card-name" name="cardName" type="text" autocomplete="cc-name" required>
+                </label>
+
+                <label>
+                    Card number
+                    <input id="card-number" name="cardNumber" type="text" inputmode="numeric" maxlength="19" placeholder="4242 4242 4242 4242" autocomplete="cc-number" required>
+                </label>
+
+                <label>
+                    Expiry (MM/YY)
+                    <input id="card-expiry" name="cardExpiry" type="text" inputmode="numeric" maxlength="5" placeholder="MM/YY" autocomplete="cc-exp" required>
+                </label>
+
+                <label>
+                    CVC
+                    <input id="card-cvc" name="cardCvc" type="password" inputmode="numeric" maxlength="4" placeholder="123" autocomplete="cc-csc" required>
+                </label>
+
+                <div style="margin-top:16px;display:flex;gap:10px;align-items:center;">
+                    <button type="submit" id="pay-btn" class="submit-btn">Pay Now</button>
+                    <button type="button" id="cancel-pay" class="submit-btn" style="background:#666;">Cancel</button>
+                </div>
+
+                <div id="payment-message" role="status" aria-live="polite" style="margin-top:12px;"></div>
+            </form>
+        </section>
+    </main>
+
+    <script src="checkout.js"></script>
+</body>
+</html>

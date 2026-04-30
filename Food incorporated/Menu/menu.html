@@ -4,34 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Delicious Menu</title>
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
     <link rel="stylesheet" href="menu.css">
 </head>
-<!-- Inside the checkout-modal in menu.html, replace the inputs with this: -->
-<div id="checkout-modal" class="modal hidden">
-    <div class="modal-content">
-        <h2>Checkout</h2>
-        <div id="order-summary"></div>
-        <p class="total">Total: £<span id="total-price">0.00</span></p>
-        
-        <!-- Only name is required now -->
-        <input type="text" id="customer-name" placeholder="Enter your name to order" required>
-        
-        <!-- Display the assigned table so the user knows where they are "sitting" -->
-        <p style="color: #666; font-size: 0.9rem;">Your Table: <strong id="display-table">--</strong></p>
-
-        <div class="modal-actions">
-            <button id="confirm-order">Send to Kitchen</button>
-            <button id="cancel-order">Keep Browsing</button>
-        </div>
-    </div>
-</div>
-
 <body>
 
         <!-- Heading / Hero -->
         <section class="heading">
             <div class="hero-content">
+               <div class="logo-badge">
+                    <img src="../Images/logo.png" alt="Food Incorporated Logo">
+                </div>
                 <h1>Our Menu</h1>
+                <div class="carousel-container" role="region" aria-roledescription="carousel" aria-label="Food Highlights Gallery">
+            <img id="carousel-img" src="../Images/food1.jpg" alt="Loading our menu highlights...">
+            <!-- Visually hidden div for screen reader updates -->
+            <div id="carousel-announcer" class="sr-only" aria-live="polite"></div>
+        </div>
                 <p>All dishes are freshly prepared using traditional recipes and the finest ingredients</p>
             </div>
         </section>
@@ -50,9 +39,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£9.00</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
 
@@ -63,9 +52,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£9.00</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
 
@@ -76,9 +65,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£8.00</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
 
@@ -89,9 +78,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£7.50</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
                 </section>
@@ -107,9 +96,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£6.50</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
 
@@ -120,9 +109,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£6.00</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
 
@@ -133,9 +122,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£3.50</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
                 </section>
@@ -151,9 +140,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£2.00</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
 
@@ -164,9 +153,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£2.00</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
 
@@ -177,9 +166,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£1.50</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
 
@@ -190,9 +179,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£0.80</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
                 </section>
@@ -208,9 +197,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£2.50</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
 
@@ -221,9 +210,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£2.50</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
 
@@ -234,9 +223,9 @@
                         </div>
                         <div class="item-controls">
                             <span class="price">£1.80</span>
-                            <button class="qty-btn decrease">−</button>
+                            <button type="button" class="qty-btn decrease">−</button>
                             <span class="quantity">0</span>
-                            <button class="qty-btn increase">+</button>
+                            <button type="button" class="qty-btn increase">+</button>
                         </div>
                     </div>
                 </section>
@@ -252,6 +241,26 @@
             </div>
         </form>
 
-    </body>
+    <!-- Checkout modal -->
+    <div id="checkout-modal" class="modal hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="checkout-title">
+        <div class="modal-content" tabindex="-1">
+            <h2 id="checkout-title">Checkout</h2>
+            <div id="order-summary"></div>
+            <p class="total">Total: £<span id="total-price">0.00</span></p>
+
+            <!-- Only name is required now -->
+            <input type="text" id="customer-name" placeholder="Enter your name to order" required>
+
+            <!-- Display the assigned table so the user knows where they are "sitting" -->
+            <p class="table-info">Your Table: <strong id="display-table">--</strong></p>
+
+            <div class="modal-actions">
+                <button type="button" id="confirm-order" aria-label="Send order to kitchen">Send to Kitchen</button>
+                <button type="button" id="cancel-order" aria-label="Close checkout and continue browsing">Keep Browsing</button>
+            </div>
+        </div>
+    </div>
+
     <script src="menu.js"></script>
+    </body>
 </html>

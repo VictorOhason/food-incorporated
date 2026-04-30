@@ -1,29 +1,20 @@
-# api.py
-import requests
-# api.py
 import requests
 
-# REPLACE with your real Render URL
-BASE_URL = "https://your-app-name.onrender.com"
+# Change this to your Render URL later if you deploy!
+BASE_URL = "http://127.0.0.1:5000" 
 
 def fetch_orders():
-    try:
-        # Note: Render "goes to sleep" after 15 mins of inactivity.
-        # The first request might take 30 seconds to wake up!
-        return requests.get(f"{BASE_URL}/orders", timeout=10).json()
-    except:
-        return []
+    response = requests.get(f"{BASE_URL}/orders")
+    return response.json()
 
-BASE_URL = "http://localhost:5000"
+def update_order_status(order_id, status):
+    payload = {"status": status}
+    return requests.patch(f"{BASE_URL}/orders/{order_id}/status", json=payload)
 
-def fetch_orders():
-    try:
-        return requests.get(f"{BASE_URL}/orders").json()
-    except:
-        return []
+def fetch_stock():
+    response = requests.get(f"{BASE_URL}/stock")
+    return response.json()
 
-def update_order_status(order_number, status):
-    requests.patch(
-        f"{BASE_URL}/orders/{order_number}/status",
-        json={"status": status}
-    )
+def update_stock(item_id, change):
+    payload = {"id": item_id, "change": change}
+    return requests.post(f"{BASE_URL}/stock/update", json=payload)

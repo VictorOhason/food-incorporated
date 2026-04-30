@@ -19,8 +19,13 @@ body {
         #102f7a
     );
     color: var(--soft-white);
-    padding: 0px 20px;
+    padding: 80px 20px;
     text-align: center;
+}
+.hero-content{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 .hero-content h1 {
@@ -177,3 +182,195 @@ body {
 
 #confirm-order { background: var(--british-blue); color: white; flex: 2; padding: 10px; border: none; border-radius: 5px; cursor: pointer;}
 #cancel-order { background: #ccc; flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer;}
+
+.table-info {
+    color: #666;
+    font-size: 0.9rem;
+}
+/* --- ACCESSIBILITY --- */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* --- CAROUSEL STYLING --- */
+.carousel-container {
+    width: 100%;
+    max-width: 1000px;
+    height: 250px; /* Adjust height as needed */
+    margin: 20px auto;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0,0,0,0.2);
+}
+
+#carousel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures images aren't stretched */
+    transition: opacity 0.6s ease-in-out;
+}
+
+/* Make it slightly smaller on mobile */
+@media (max-width: 1100px) {
+    .carousel-container {
+        height: 300px;
+        max-width: 90%;
+    }
+}
+@media(max-width:600px){
+.carousel-container{
+    height: 200px;
+}
+}
+/* The Badge Container - Fixed the double dash typo */
+.logo-badge {
+    width: 180px;           
+    height: 180px;
+    background-color: white; 
+    margin: 0 auto 20px;    
+    border-radius: 50%;      
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); 
+    border: 4px solid var(--british-red); 
+    transition: transform 0.3s ease;
+    overflow: hidden; /* Keeps the image from spilling out */
+}
+
+/* Hover effect */
+.logo-badge:hover {
+    transform: scale(1.05) rotate(2deg);
+}
+
+/* The Image inside the badge - This is what controls the size */
+.logo-badge img {
+    max-width: 90%;   /* Keeps image inside the circle */
+    max-height: 90%;  /* Keeps image inside the circle */
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* --- ACCESSIBILITY FOCUS STYLES --- */
+.qty-btn:focus,
+.submit-btn:focus,
+#confirm-order:focus,
+#cancel-order:focus {
+    outline: 3px solid var(--british-red);
+    outline-offset: 2px;
+}
+
+.modal-content:focus {
+    outline: none;
+}
+
+/* --- CHECKOUT PAGE STYLING (Rich, modern card UI) --- */
+body > main {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Full-bleed hero background for the checkout page */
+body {
+    /* subtle radial vignette to separate the page */
+    background-image: radial-gradient(1200px 600px at 10% 20%, rgba(10,42,102,0.08), transparent 8%), radial-gradient(800px 400px at 90% 80%, rgba(200,16,46,0.04), transparent 10%), linear-gradient(180deg, var(--off-white), #f3f6fb 60%);
+}
+
+#order-section {
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), #ffffff);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 20px 40px rgba(10,42,102,0.08);
+    margin-bottom: 18px;
+}
+
+#order-summary-block div { padding: 8px 0; border-bottom: 1px dashed #eee; }
+#order-summary-block p { margin: 6px 0; color: var(--text-dark); }
+
+/* Checkout form container */
+#payment-heading { margin-top: 18px; }
+form#checkout-form {
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,252,0.95));
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 30px 60px rgba(10,42,102,0.06);
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+form#checkout-form label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.95rem;
+    color: #0f1724;
+}
+
+form#checkout-form input {
+    margin-top: 8px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(15,23,36,0.08);
+    background: linear-gradient(180deg, #ffffff, #fbfdff);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 6px 18px rgba(10,42,102,0.04);
+    font-size: 1rem;
+    transition: box-shadow .18s ease, border-color .15s ease, transform .12s ease;
+}
+
+form#checkout-form input:focus {
+    outline: none;
+    border-color: var(--british-blue);
+    box-shadow: 0 6px 18px rgba(10,42,102,0.12);
+    transform: translateY(-1px);
+}
+
+/* Two-column layout for expiry + cvc on wider screens */
+@media (min-width: 520px) {
+    .expiry-cvc { display: grid; grid-template-columns: 1fr 120px; gap: 12px; }
+}
+
+/* Primary pay button — glassy gradient + motion */
+#pay-btn {
+    background: linear-gradient(90deg, var(--british-red), #ff4b6e 60%);
+    color: white;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    box-shadow: 0 12px 30px rgba(200,16,46,0.18), 0 2px 0 rgba(255,255,255,0.06) inset;
+    border: none;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease, filter .12s ease;
+}
+
+#pay-btn:hover { transform: translateY(-3px) scale(1.01); filter: saturate(1.05); }
+#pay-btn:active { transform: translateY(0); }
+
+#cancel-pay { background: transparent; color: #374151; border-radius: 12px; padding: 10px 16px; border: 1px solid rgba(55,65,81,0.08); }
+
+#payment-message { font-weight: 600; color: #065f46; }
+
+/* Success animation */
+.success-burst {
+    display: inline-block;
+    background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.7), transparent 25%);
+    padding: 8px 12px;
+    border-radius: 999px;
+}
+
+/* Make checkout page feel contained on very large screens */
+@media (min-width: 900px) {
+    main { max-width: 860px; margin: 64px auto; }
+}

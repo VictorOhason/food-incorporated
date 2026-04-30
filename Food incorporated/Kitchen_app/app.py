@@ -1,132 +1,108 @@
-import sys
-import os
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QScrollArea, QLabel
-from PySide6.QtCore import QThread, Signal, QTimer, Qt
-from PySide6.QtMultimedia import QSoundEffect, QAudioOutput
-from PySide6.QtCore import QUrl
+import tkinter as tk
+from tkinter import ttk 
+# Added update_stock to the imports
+from api import fetch_orders, update_order_status, fetch_stock, update_stock 
 
-from api import fetch_orders
-from models import Order
-from widgets.order_card import OrderCard
+# --- TOOLS (Functions) ---
 
-class FetchWorker(QThread):
-    orders_fetched = Signal(list)
-    def run(self):
-        data = fetch_orders()
-        self.orders_fetched.emit(data)
-
-class KitchenApp(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Kitchen Pro - Food Inc.")
-        self.resize(1000, 800)
-        
-        self.current_filter = "all"
-        self.cards = {}
-        self.seen_ids = set() # To track new orders for sound
-        
-        # Setup Sound
-        self.effect = QSoundEffect()
-        # You can use a system beep or a local .wav file
-        # self.effect.setSource(QUrl.fromLocalFile("alert.wav")) 
-        self.effect.setVolume(0.5)
-
-        self.build_ui()
-        
-        self.worker = FetchWorker()
-        self.worker.orders_fetched.connect(self.display_orders)
-        
-        # PRO FEATURE: Auto-Refresh Timer (Every 10 seconds)
-        self.refresh_timer = QTimer()
-        self.refresh_timer.timeout.connect(self.load_orders)
-        self.refresh_timer.start(10000) 
-
-        self.load_orders()
-
-    def build_ui(self):
-        self.main_layout = QVBoxLayout(self)
-
-        # Tabs including "Ready" and "Served"
-        tabs_layout = QHBoxLayout()
-        self.filters = {
-            "all": QPushButton("All"),
-            "pending": QPushButton("Pending ⏳"),
-            "preparing": QPushButton("Preparing 🔥"),
-            "ready": QPushButton("Ready ✅"),
-            "served": QPushButton("History 📁")
-        }
-
-        for key, btn in self.filters.items():
-            btn.clicked.connect(lambda checked, k=key: self.set_filter(k))
-            tabs_layout.addWidget(btn)
-
-        self.main_layout.addLayout(tabs_layout)
-
-        self.scroll = QScrollArea()
-        self.container = QWidget()
-        self.list_layout = QVBoxLayout(self.container)
-        self.list_layout.setAlignment(Qt.AlignTop)
-        
-        self.scroll.setWidget(self.container)
-        self.scroll.setWidgetResizable(True)
-        self.main_layout.addWidget(self.scroll)
-
-    def set_filter(self, status):
-        self.current_filter = status
-        for card in self.cards.values():
-            self.apply_filter_to_card(card)
-        self.load_orders()
-
-    def load_orders(self):
-        if not self.worker.isRunning():
-            self.worker.start()
-
-    def apply_filter_to_card(self, card):
-        # Logic for what to show in each tab
-        if self.current_filter == "all":
-            card.setVisible(card.order.status != "served")
-        else:
-            card.setVisible(card.order.status == self.current_filter)
-
-    def display_orders(self, orders_data):
-        incoming_ids = [o["orderNumber"] for o in orders_data]
-        is_first_load = len(self.seen_ids) == 0
-
-        for raw in orders_data:
-            order = Order(raw)
-            oid = order.order_number
-
-            # PRO FEATURE: Sound Alert for new orders
-            if oid not in self.seen_ids:
-                self.seen_ids.add(oid)
-                if not is_first_load:
-                    self.effect.play() # "Ding!"
-                    print(f"New Order Alert: #{oid}")
-
-            if oid in self.cards:
-                card = self.cards[oid]
-                card.order = order 
-                card.update_visuals()
-            else:
-                card = OrderCard(order, self.load_orders)
-                self.cards[oid] = card
-                self.list_layout.insertWidget(0, card) # Newest at top
-            
-            self.apply_filter_to_card(card)
-
-        # Cleanup deleted orders
-        for oid in list(self.cards.keys()):
-            if oid not in incoming_ids:
-                self.cards[oid].setParent(None)
-                del self.cards[oid]
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
+def handle_click(order_number, current_status, button_widget):
+    button_widget.config(state="disabled", text="Updating...")
+    new_status = "preparing" if current_status == "pending" else "ready"
     try:
-        with open("styles.qss", "r") as f:
-            app.setStyleSheet(f.read())
-    except:
-        pass
-    window = KitchenApp()
-    window.show()
-    sys.exit(app.exec())
+        update_order_status(order_number, new_status)
+    except Exception as e:
+        print(f"Failed to update server: {e}")
+    load_data()
+
+def create_order_card(parent, order_number, table_name, items, status="pending"):
+    colors = {"pending": "#facc15", "preparing": "#3b82f6", "ready": "#22c55e"}
+    status_color = colors.get(status, "#9ca3af")
+    card = tk.Frame(parent, bg="white", highlightbackground="#d1d5db", highlightthickness=1, bd=0)
+    card.pack(fill="x", padx=10, pady=5)
+    stripe = tk.Frame(card, bg=status_color, width=10)
+    stripe.pack(side="left", fill="y")
+    content = tk.Frame(card, bg="white")
+    content.pack(side="left", fill="both", expand=True, padx=10, pady=5)
+    tk.Label(content, text=f"Order #{order_number}", bg="white", fg="#0a2a66", font=("Arial", 12, "bold")).pack(anchor="w")
+    tk.Label(content, text=f" TABLE {table_name} ", bg="#ffeeef", fg="#c8102e", font=("Arial", 10, "bold")).pack(anchor="w", pady=2)
+    for item in items:
+        item_text = item.get("name", "Unknown Item") if isinstance(item, dict) else item
+        tk.Label(content, text=f"• {item_text}", bg="white", fg="#4b5563", font=("Arial", 10)).pack(anchor="w", padx=10)
+    if status != "ready":
+        btn_text = "Start Cooking" if status == "pending" else "Mark as Ready"
+        action_btn = tk.Button(content, text=btn_text, bg="#0a2a66", fg="white")
+        action_btn.config(command=lambda: handle_click(order_number, status, action_btn))
+        action_btn.pack(pady=5, fill="x")
+    return card
+
+def load_data():
+    try:
+        orders = fetch_orders()
+        for widget in scrollable_frame.winfo_children():
+            widget.destroy()
+        for o in orders:
+            create_order_card(scrollable_frame, o.get("orderNumber", "???"), o.get("tableNumber", "N/A"), o.get("items", []), o.get("status", "pending"))
+    except Exception as e:
+        print(f"Order Connection Error: {e}")
+    root.after(5000, load_data)
+    root.after(30000, load_stock_data) # 30000 milliseconds = 30 seconds
+
+def load_stock_data():
+    try:
+        for widget in stock_frame.winfo_children():
+            widget.destroy()
+        stock_list = fetch_stock()
+        
+        for i, item in enumerate(stock_list):
+            # Logic: If stock is less than 5, use Red text
+            qty_color = "red" if item["quantity"] < 5 else "black"
+            
+            tk.Label(stock_frame, text=item["name"], font=("Arial", 10, "bold"), bg="white").grid(row=i, column=0, padx=20, pady=10, sticky="w")
+            
+            tk.Button(stock_frame, text="-", width=3, bg="#ef4444", fg="white",
+                    command=lambda i=item: [update_stock(i['id'], -1), load_stock_data()]).grid(row=i, column=1)
+            
+            # Apply the color to the quantity label
+            tk.Label(stock_frame, text=f"{item['quantity']} {item['unit']}", bg="white", fg=qty_color, width=10, font=("Arial", 10, "bold")).grid(row=i, column=2)
+            
+            tk.Button(stock_frame, text="+", width=3, bg="#22c55e", fg="white",
+                    command=lambda i=item: [update_stock(i['id'], 1), load_stock_data()]).grid(row=i, column=3)
+    except Exception as e:
+        print(f"Stock Connection Error: {e}")
+
+# --- UI SETUP ---
+root = tk.Tk()
+root.title("Food.Inc Kitchen")
+root.geometry("600x800")
+
+top_bar = tk.Frame(root, bg="#0a2a66", height=60)
+top_bar.pack(fill="x")
+tk.Label(top_bar, text="KITCHEN SYSTEM", fg="white", bg="#0a2a66", font=("Arial", 16, "bold")).pack(pady=15)
+
+notebook = ttk.Notebook(root)
+order_frame = tk.Frame(notebook, bg="#f3f4f6")
+stock_frame = tk.Frame(notebook, bg="white")
+notebook.add(order_frame, text=" Orders ")
+notebook.add(stock_frame, text=" Stock Management ")
+notebook.pack(fill="both", expand=True)
+
+container = tk.Frame(order_frame)
+container.pack(fill="both", expand=True)
+canvas = tk.Canvas(container, bg="#f3f4f6", highlightthickness=0)
+canvas.pack(side="left", fill="both", expand=True)
+scrollbar = tk.Scrollbar(container, orient="vertical", command=canvas.yview)
+scrollbar.pack(side="right", fill="y")
+canvas.configure(yscrollcommand=scrollbar.set)
+scrollable_frame = tk.Frame(canvas, bg="#f3f4f6")
+canvas.create_window((0, 0), window=scrollable_frame, anchor="nw", width=580)
+
+def on_frame_configure(event):
+    canvas.configure(scrollregion=canvas.bbox("all"))
+scrollable_frame.bind("<Configure>", on_frame_configure)
+def on_canvas_configure(event):
+    canvas.itemconfig(1, width=event.width)
+canvas.bind("<Configure>", on_canvas_configure)
+
+load_data()
+load_stock_data()
+root.mainloop()
